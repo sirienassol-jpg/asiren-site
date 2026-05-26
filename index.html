@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asiren — кав’ярня з онлайн-замовленням</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #fff8f0;
+      --card: #ffffff;
+      --text: #2a1a12;
+      --muted: #7a665c;
+      --accent: #9b5a35;
+      --accent-dark: #6f3d23;
+      --soft: #f1dfcf;
+      --border: #ead7c7;
+      --success: #2f7d4f;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 248, 240, 0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 0;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--accent-dark);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .cart-badge {
+      background: var(--accent);
+      color: white;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-weight: 700;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 32px;
+      align-items: center;
+      padding: 60px 0 42px;
+    }
+
+    .hero h1 {
+      font-size: clamp(34px, 6vw, 64px);
+      line-height: 1.05;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 19px;
+      max-width: 620px;
+      margin-bottom: 26px;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, #fff, #f4ddca);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 18px;
+      box-shadow: 0 18px 40px rgba(111, 61, 35, 0.15);
+      overflow: hidden;
+    }
+
+    .hero-photo {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 22px;
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .hero-card h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .hero-card p {
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 14px;
+      padding: 12px 18px;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn.secondary {
+      background: var(--soft);
+      color: var(--text);
+    }
+
+    .btn.secondary:hover {
+      background: #e7cab2;
+    }
+
+    section {
+      padding: 36px 0;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .section-title h2 {
+      font-size: 34px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      max-width: 520px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      padding: 9px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .product-card,
+    .info-card,
+    .checkout-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 10px 28px rgba(111, 61, 35, 0.08);
+    }
+
+    .product-img {
+      height: 190px;
+      border-radius: 18px;
+      background: var(--soft);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.25s ease;
+    }
+
+    .product-card:hover .product-img img {
+      transform: scale(1.04);
+    }
+
+    .product-card h3 {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .product-card p {
+      color: var(--muted);
+      min-height: 48px;
+      margin-bottom: 12px;
+    }
+
+    .product-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .price {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent-dark);
+    }
+
+    .layout-two {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .cart-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 70px 1fr auto;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+    }
+
+    .cart-thumb img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 14px;
+      display: block;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: end;
+    }
+
+    .small-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: white;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .remove-btn {
+      border: none;
+      background: transparent;
+      color: #a13b2d;
+      cursor: pointer;
+      font-weight: 700;
+      margin-top: 5px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 22px;
+      font-weight: 800;
+      padding-top: 12px;
+      border-top: 2px solid var(--border);
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      font-weight: 700;
+      display: grid;
+      gap: 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font: inherit;
+      background: white;
+    }
+
+    textarea {
+      min-height: 84px;
+      resize: vertical;
+    }
+
+    .radio-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .radio-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      background: #fffaf5;
+      cursor: pointer;
+    }
+
+    .radio-card input {
+      width: auto;
+      margin-right: 6px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .success {
+      margin-top: 14px;
+      background: #e7f5ec;
+      color: var(--success);
+      border: 1px solid #b9dfc6;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: 700;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .info-card h3 {
+      margin-bottom: 8px;
+      color: var(--accent-dark);
+    }
+
+    .info-card p {
+      color: var(--muted);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .hero,
+      .layout-two {
+        grid-template-columns: 1fr;
+      }
+
+      .menu-grid,
+      .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .menu-grid,
+      .info-grid,
+      .radio-row {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .cart-item {
+        grid-template-columns: 56px 1fr;
+      }
+
+      .cart-thumb img {
+        width: 56px;
+        height: 56px;
+      }
+
+      .qty-controls {
+        grid-column: 2;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="logo">Asiren</div>
+      <nav class="nav-links">
+        <a href="#home">Головна</a>
+        <a href="#menu">Меню</a>
+        <a href="#order">Замовлення</a>
+        <a href="#contacts">Контакти</a>
+        <a href="#cart" class="cart-badge">Кошик: <span id="cartCount">0</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container hero" id="home">
+      <div>
+        <h1>Кава, десерти та затишок — онлайн</h1>
+        <p>
+          Asiren — сайт кав’ярні, де можна швидко обрати улюблений напій,
+          додати десерт і оформити замовлення з доставкою додому або самовивозом.
+        </p>
+        <a href="#menu" class="btn">Перейти до меню</a>
+        <a href="#order" class="btn secondary">Оформити замовлення</a>
+      </div>
+      <div class="hero-card">
+        <img
+          class="hero-photo"
+          src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80"
+          alt="Кава та десерти у кав’ярні Asiren"
+        />
+        <h3>Замовляй так, як зручно</h3>
+        <p>Обери доставку додому або забери готове замовлення у кав’ярні.</p>
+      </div>
+    </section>
+
+    <section class="container" id="menu">
+      <div class="section-title">
+        <div>
+          <h2>Меню Asiren</h2>
+          <p>Обери напої та десерти, а сайт автоматично порахує суму замовлення.</p>
+        </div>
+      </div>
+
+      <div class="filters" id="filters"></div>
+      <div class="menu-grid" id="menuGrid"></div>
+    </section>
+
+    <section class="container" id="cart">
+      <div class="section-title">
+        <div>
+          <h2>Кошик</h2>
+          <p>Тут зберігаються товари, які користувач додав до замовлення.</p>
+        </div>
+      </div>
+
+      <div class="layout-two">
+        <div class="checkout-card">
+          <h3>Ваше замовлення</h3>
+          <div class="cart-items" id="cartItems"></div>
+          <div class="total-row">
+            <span>Разом:</span>
+            <span id="cartTotal">0 грн</span>
+          </div>
+        </div>
+
+        <div class="checkout-card" id="order">
+          <h3>Оформлення замовлення</h3>
+          <form id="orderForm">
+            <label>
+              Ім’я клієнта
+              <input type="text" id="customerName" placeholder="Наприклад: Анастасія" required />
+            </label>
+
+            <label>
+              Номер телефону
+              <input type="tel" id="phone" placeholder="+380 XX XXX XX XX" required />
+            </label>
+
+            <div>
+              <strong>Спосіб отримання</strong>
+              <div class="radio-row">
+                <label class="radio-card">
+                  <input type="radio" name="receiveType" value="delivery" checked />
+                  Доставка додому
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="receiveType" value="pickup" />
+                  Самовивіз із кав’ярні
+                </label>
+              </div>
+            </div>
+
+            <label id="addressField">
+              Адреса доставки
+              <input type="text" id="address" placeholder="Вулиця, будинок, квартира" />
+            </label>
+
+            <label id="pickupField" class="hidden">
+              Час самовивозу
+              <input type="time" id="pickupTime" />
+            </label>
+
+            <label>
+              Спосіб оплати
+              <select id="payment" required>
+                <option value="cash">Готівка</option>
+                <option value="card">Картка при отриманні</option>
+                <option value="online">Онлайн-оплата</option>
+              </select>
+            </label>
+
+            <label>
+              Коментар до замовлення
+              <textarea id="comment" placeholder="Наприклад: без цукру, більше льоду, подзвонити перед доставкою"></textarea>
+            </label>
+
+            <button type="submit" class="btn">Підтвердити замовлення</button>
+          </form>
+          <div id="orderMessage"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" id="contacts">
+      <div class="section-title">
+        <div>
+          <h2>Контакти</h2>
+          <p>Дані, які потрібні користувачу для зв’язку з кав’ярнею.</p>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Адреса</h3>
+          <p>м. Харків, вул. Центральна, 10</p>
+        </div>
+        <div class="info-card">
+          <h3>Графік роботи</h3>
+          <p>Щодня з 08:00 до 21:00</p>
+        </div>
+        <div class="info-card">
+          <h3>Зв’язок</h3>
+          <p>+380 XX XXX XX XX<br />Instagram: @asiren.coffee</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      © 2026 Asiren. Навчальний web-застосунок кав’ярні з онлайн-замовленням.
+    </div>
+  </footer>
+
+  <script>
+    const products = [
+      {
+        id: 1,
+        name: "Лате",
+        category: "Кава",
+        price: 75,
+        image: "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?auto=format&fit=crop&w=700&q=80",
+        description: "Ніжна кава з молоком та легкою пінкою."
+      },
+      {
+        id: 2,
+        name: "Капучино",
+        category: "Кава",
+        price: 70,
+        image: "https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=700&q=80",
+        description: "Класична кава з насиченим смаком і молочною піною."
+      },
+      {
+        id: 3,
+        name: "Американо",
+        category: "Кава",
+        price: 55,
+        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=700&q=80",
+        description: "Чорна кава для тих, хто любить простий смак."
+      },
+      {
+        id: 4,
+        name: "Айс-лате",
+        category: "Холодні напої",
+        price: 85,
+        image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=700&q=80",
+        description: "Холодна кава з молоком і льодом."
+      },
+      {
+        id: 5,
+        name: "Лимонад",
+        category: "Холодні напої",
+        price: 65,
+        image: "https://images.unsplash.com/photo-1497534446932-c925b458314e?auto=format&fit=crop&w=700&q=80",
+        description: "Освіжаючий напій із лимоном та м’ятою."
+      },
+      {
+        id: 6,
+        name: "Чизкейк",
+        category: "Десерти",
+        price: 95,
+        image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=700&q=80",
+        description: "Ніжний сирний десерт до кави."
+      },
+      {
+        id: 7,
+        name: "Маффін шоколадний",
+        category: "Десерти",
+        price: 60,
+        image: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?auto=format&fit=crop&w=700&q=80",
+        description: "М’який маффін із шоколадною начинкою."
+      },
+      {
+        id: 8,
+        name: "Круасан",
+        category: "Десерти",
+        price: 70,
+        image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=700&q=80",
+        description: "Хрусткий круасан, який можна взяти з собою."
+      }
+    ];
+
+    let cart = JSON.parse(localStorage.getItem("asirenCart")) || [];
+    let activeCategory = "Усе";
+
+    const menuGrid = document.getElementById("menuGrid");
+    const filters = document.getElementById("filters");
+    const cartItems = document.getElementById("cartItems");
+    const cartTotal = document.getElementById("cartTotal");
+    const cartCount = document.getElementById("cartCount");
+    const orderForm = document.getElementById("orderForm");
+    const orderMessage = document.getElementById("orderMessage");
+    const addressField = document.getElementById("addressField");
+    const pickupField = document.getElementById("pickupField");
+    const addressInput = document.getElementById("address");
+    const pickupTimeInput = document.getElementById("pickupTime");
+
+    function saveCart() {
+      localStorage.setItem("asirenCart", JSON.stringify(cart));
+    }
+
+    function getCategories() {
+      return ["Усе", ...new Set(products.map(product => product.category))];
+    }
+
+    function renderFilters() {
+      filters.innerHTML = "";
+      getCategories().forEach(category => {
+        const button = document.createElement("button");
+        button.className = "filter-btn" + (category === activeCategory ? " active" : "");
+        button.textContent = category;
+        button.addEventListener("click", () => {
+          activeCategory = category;
+          renderFilters();
+          renderProducts();
+        });
+        filters.appendChild(button);
+      });
+    }
+
+    function renderProducts() {
+      const filteredProducts = activeCategory === "Усе"
+        ? products
+        : products.filter(product => product.category === activeCategory);
+
+      menuGrid.innerHTML = filteredProducts.map(product => `
+        <article class="product-card">
+          <div class="product-img">
+            <img src="${product.image}" alt="${product.name}" loading="lazy">
+          </div>
+          <h3>${product.name}</h3>
+          <p>${product.description}</p>
+          <div class="product-bottom">
+            <span class="price">${product.price} грн</span>
+            <button class="btn" onclick="addToCart(${product.id})">Додати</button>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function addToCart(productId) {
+      const product = products.find(item => item.id === productId);
+      const cartItem = cart.find(item => item.id === productId);
+
+      if (cartItem) {
+        cartItem.quantity += 1;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+
+      saveCart();
+      renderCart();
+    }
+
+    function changeQuantity(productId, amount) {
+      const cartItem = cart.find(item => item.id === productId);
+      if (!cartItem) return;
+
+      cartItem.quantity += amount;
+      if (cartItem.quantity <= 0) {
+        cart = cart.filter(item => item.id !== productId);
+      }
+
+      saveCart();
+      renderCart();
+    }
+
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== productId);
+      saveCart();
+      renderCart();
+    }
+
+    function getTotal() {
+      return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    }
+
+    function getCount() {
+      return cart.reduce((sum, item) => sum + item.quantity, 0);
+    }
+
+    function renderCart() {
+      if (cart.length === 0) {
+        cartItems.innerHTML = "<p>Кошик порожній. Додайте товари з меню.</p>";
+      } else {
+        cartItems.innerHTML = cart.map(item => `
+          <div class="cart-item">
+            <div class="cart-thumb">
+              <img src="${item.image}" alt="${item.name}">
+            </div>
+            <div>
+              <strong>${item.name}</strong><br />
+              <span>${item.price} грн × ${item.quantity} = ${item.price * item.quantity} грн</span><br />
+              <button class="remove-btn" onclick="removeFromCart(${item.id})">Видалити</button>
+            </div>
+            <div class="qty-controls">
+              <button class="small-btn" onclick="changeQuantity(${item.id}, -1)">−</button>
+              <strong>${item.quantity}</strong>
+              <button class="small-btn" onclick="changeQuantity(${item.id}, 1)">+</button>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      cartTotal.textContent = `${getTotal()} грн`;
+      cartCount.textContent = getCount();
+    }
+
+    function updateReceiveFields() {
+      const receiveType = document.querySelector("input[name='receiveType']:checked").value;
+
+      if (receiveType === "delivery") {
+        addressField.classList.remove("hidden");
+        pickupField.classList.add("hidden");
+        addressInput.required = true;
+        pickupTimeInput.required = false;
+      } else {
+        addressField.classList.add("hidden");
+        pickupField.classList.remove("hidden");
+        addressInput.required = false;
+        pickupTimeInput.required = true;
+      }
+    }
+
+    document.querySelectorAll("input[name='receiveType']").forEach(input => {
+      input.addEventListener("change", updateReceiveFields);
+    });
+
+    orderForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      if (cart.length === 0) {
+        orderMessage.innerHTML = `<div class="success" style="color:#a13b2d;background:#fff0ed;border-color:#f0c1b8;">Спочатку додайте хоча б один товар у кошик.</div>`;
+        return;
+      }
+
+      const customerName = document.getElementById("customerName").value;
+      const receiveType = document.querySelector("input[name='receiveType']:checked").value;
+      const receiveText = receiveType === "delivery" ? "доставка додому" : "самовивіз із кав’ярні";
+      const total = getTotal();
+
+      orderMessage.innerHTML = `
+        <div class="success">
+          Дякуємо, ${customerName}! Ваше замовлення прийнято. Спосіб отримання: ${receiveText}. Сума: ${total} грн.
+        </div>
+      `;
+
+      cart = [];
+      saveCart();
+      renderCart();
+      orderForm.reset();
+      updateReceiveFields();
+    });
+
+    renderFilters();
+    renderProducts();
+    renderCart();
+    updateReceiveFields();
+  </script>
+</body>
+</html>
